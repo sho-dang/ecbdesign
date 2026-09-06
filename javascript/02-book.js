@@ -2,15 +2,39 @@
 window.addEventListener("load", function(){
   fitStage();
 
+  /* ── 本のサイズを画面に合わせて決める ──
+     PCでは見開き（2ページ分）が左右余白100pxに収まり、かつ
+     縦も画面内に収まる大きさを選ぶ。スマホは従来どおり固定サイズ。 */
+  const BOOK_BASE_W = 340, BOOK_BASE_H = 460;
+  function calcBookSize(){
+    const vw = document.documentElement.clientWidth;
+    const vh = window.innerHeight;
+    if (vw < 900) return { w: BOOK_BASE_W, h: BOOK_BASE_H };
+
+    const SIDEBAR = 240, MARGIN = 100;
+    const availW = (vw - SIDEBAR - MARGIN * 2) / 2;   // 見開きなので半分が1ページ分
+    const availH = vh - 210;                          // 見出し・ボタン・余白の分を引く
+    const scale = Math.min(availW / BOOK_BASE_W, availH / BOOK_BASE_H, 1.6);
+    const s = Math.max(0.8, scale);
+    return { w: Math.round(BOOK_BASE_W * s), h: Math.round(BOOK_BASE_H * s) };
+  }
+  function applyBookSize(size){
+    document.documentElement.style.setProperty("--book-w", size.w + "px");
+    document.documentElement.style.setProperty("--book-h", size.h + "px");
+  }
+  let bookSize = calcBookSize();
+  applyBookSize(bookSize);
+
   /* ── 本のメニュー初期化 ── */
   const hint = document.querySelector(".hint");
+  const bookWrap = document.querySelector(".book-wrap");
   if (typeof St === "undefined"){
     hint.textContent = "⚠ ライブラリの読み込みに失敗しました。接続を確認して再読み込みしてください。";
   } else {
     try{
       const pageFlip = new St.PageFlip(document.getElementById("book"), {
-        width: 340,
-        height: 460,
+        width: bookSize.w,
+        height: bookSize.h,
         size: "fixed",
         showCover: true,
         maxShadowOpacity: .4,
@@ -67,6 +91,8 @@ window.addEventListener("load", function(){
         const atEnd   = idx >= last;
         prevBtn.disabled = atStart; tapPrevBtn.disabled = atStart;
         nextBtn.disabled = atEnd;   tapNextBtn.disabled = atEnd;
+        /* 最終ページでは見開きの右側を無くし、実ページを左に寄せる */
+        if (bookWrap) bookWrap.classList.toggle("at-end", atEnd);
       }
       updateNav(0);
 
@@ -77,10 +103,24 @@ window.addEventListener("load", function(){
           updateNav(pageFlip.getCurrentPageIndex());
         }catch(e){ /* 未対応環境では何もしない */ }
       }
+      /* ウィンドウ幅・高さが変わったら本のサイズを作り直す
+         （PC⇔スマホの切り替えや、ウィンドウのリサイズに追従） */
+      function rebuildIfNeeded(){
+        const next = calcBookSize();
+        if (next.w === bookSize.w && next.h === bookSize.h) return;
+        const cur = pageFlip.getCurrentPageIndex();
+        bookSize = next;
+        applyBookSize(bookSize);
+        try{
+          pageFlip.update({ width: bookSize.w, height: bookSize.h, size: "fixed" });
+          pageFlip.turnToPage(cur);
+          updateNav(cur);
+        }catch(e){ /* 失敗しても表示は維持される */ }
+      }
       let zoomTimer = null;
       function scheduleRefresh(){
         clearTimeout(zoomTimer);
-        zoomTimer = setTimeout(refreshBook, 250);   // 操作が落ち着いてから実行
+        zoomTimer = setTimeout(() => { rebuildIfNeeded(); refreshBook(); }, 250);
       }
       if (window.visualViewport){
         window.visualViewport.addEventListener("resize", scheduleRefresh);

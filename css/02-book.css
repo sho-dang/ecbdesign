@@ -8,15 +8,53 @@
   font-family:'Zen Kaku Gothic New',sans-serif;
   font-size:10px; letter-spacing:.2em; opacity:.55; margin-bottom:40px;
 }
+/* 本のサイズは JS が画面に合わせて --book-w / --book-h に設定します */
+:root{ --book-w:340px; --book-h:460px; }
+
 .book-wrap{
   position:relative;
-  width:340px; height:460px;      /* 本の実寸に固定 */
+  width:var(--book-w); height:var(--book-h);
   overflow:hidden;                /* めくり中の一時的なはみ出しを遮断 */
   contain:layout size paint;      /* 内部の変形が外側レイアウトに影響しないようにする */
 }
 /* 本体は枠にぴったり収め、拡大方向の変形を無効化 */
-#book{width:340px !important; height:460px !important}
-#book .stf__parent{width:340px !important; height:460px !important}
+#book{width:var(--book-w) !important; height:var(--book-h) !important}
+#book .stf__parent{width:var(--book-w) !important; height:var(--book-h) !important}
+
+/* ===== PC：本を開いた見開き表現 =====
+   実ページの隣に、色味だけ揃えた空白ページを並べます。
+   通常は「空白（左）＋ 実ページ（右）」、最終ページでは実ページのみ左に寄せます。 */
+.spread-blank{display:none}
+
+@media (min-width:900px){
+  .book-wrap{
+    width:calc(var(--book-w) * 2);        /* 見開き2ページ分 */
+    overflow:visible;
+    contain:none;
+  }
+  #book{
+    position:absolute; top:0; right:0;    /* 通常は右ページ側に配置 */
+  }
+  .spread-blank{
+    display:block;
+    position:absolute; top:0; left:0;
+    width:var(--book-w); height:var(--book-h);
+    background:#eadfc8;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(120,90,40,.03) 0 1px, transparent 1px 4px),
+      radial-gradient(ellipse at center, transparent 55%, rgba(120,90,40,.18) 100%);
+    box-shadow:inset -14px 0 22px -14px rgba(26,26,26,.45);  /* 綴じ側の陰 */
+  }
+  /* 最終ページ：実ページを左に置き、右の空白は出さない */
+  .book-wrap.at-end #book{right:auto; left:0}
+  .book-wrap.at-end .spread-blank{display:none}
+  /* 左右のタップ領域は見開き全体ではなく実ページ側に合わせる */
+  .book-wrap .tap-zone{width:26px}
+  .book-wrap .tap-next{right:0}
+  .book-wrap .tap-prev{left:var(--book-w)}
+  .book-wrap.at-end .tap-prev{left:0}
+  .book-wrap.at-end .tap-next{right:var(--book-w)}
+}
 #book{
   pointer-events:none;              /* ドラッグ・スワイプでのめくりを遮断 */
 }

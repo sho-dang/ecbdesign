@@ -128,8 +128,8 @@ body{
   margin:-9px 0 0 -9px;        /* translate座標＝豆の中心 */
   opacity:0;
   animation:trace var(--bean-dur) linear var(--bean-delay) forwards;
-  will-change:transform;
-  filter:drop-shadow(0 2px 4px rgba(63,52,39,.35));
+  /* 毎フレーム再計算される filter:drop-shadow はカクつきの原因になるため使わない */
+  will-change:transform, offset-distance;
   z-index:5;
 }
 /* 対応ブラウザではベジェ曲線の経路に沿ってなめらかに移動 */
@@ -138,6 +138,7 @@ body{
     margin:0;
     offset-path: path("M -460 230 C -330,175 -140,245 10,210 C 55,182 100,182 140,212 C 185,240 225,180 265,210 C 289,226 266,256 185,268 C 150,280 120,254 90,270 C 60,284 35,256 10,268 C -8,284 -8,310 10,326 C 55,300 95,352 135,328 C 150,318 155,334 160,326 C 240,300 330,230 400,175 C 445,132 488,151 504,168");
     offset-rotate: auto;             /* 進行方向に自然に向きが追従 */
+    will-change: offset-distance;
     animation: traceD var(--bean-dur) linear var(--bean-delay) forwards;
   }
 }
@@ -150,6 +151,8 @@ body{
 .bean svg{
   display:block;
   animation:flutter 1.2s ease-in-out infinite alternate;  /* ごく控えめな揺れ */
+  will-change:transform;
+  backface-visibility:hidden;      /* 合成レイヤーに載せて描画を安定させる */
 }
 @keyframes flutter{
   from{transform:translateY(-1px) rotate(2.5deg)}
