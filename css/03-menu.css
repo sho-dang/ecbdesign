@@ -3,7 +3,7 @@
    ④ サイドメニュー（展開式）
 ============================================================ */
 .menu-toggle{
-  position:fixed; top:20px; left:20px; z-index:1001;
+  position:fixed; top:20px; left:20px; z-index:99999;
   width:58px; height:58px;
   background:#eadfc8;                 /* 淡いブラウン */
   border:1px solid #1a1a1a;
@@ -39,7 +39,7 @@
 .menu-toggle.open .mt-icon::after{opacity:1; transform:rotate(-45deg)}
 .mt-label{font-size:9px; letter-spacing:.18em; line-height:1}
 .side-menu{
-  position:fixed; top:0; left:0; z-index:1000;
+  position:fixed; top:0; left:0; z-index:99998;
   height:100vh; width:min(280px, 82vw);
   background:#eadfc8;                 /* 淡いブラウン */
   border-right:1px solid #1a1a1a;
@@ -48,7 +48,7 @@
   transition:transform .4s cubic-bezier(.22,.9,.3,1);
   overflow-y:auto;
 }
-.side-menu.open{transform:translateX(0)}
+.side-menu.open{transform:translateX(0) !important}
 
 /* サイドメニュー上部のブランド表記（PCの常時表示で映える） */
 .side-brand{
@@ -88,12 +88,12 @@
 @media (hover:hover){ .side-menu nav a:hover{color:#1a1a1a; opacity:.55} }
 .side-menu a, .side-menu a:visited, .side-menu a:active{color:#1a1a1a}
 .overlay{
-  position:fixed; inset:0; z-index:999;
+  position:fixed; inset:0; z-index:99997;
   background:rgba(20,15,8,.55);
   opacity:0; pointer-events:none;
   transition:opacity .35s;
 }
-.overlay.show{opacity:1; pointer-events:auto}
+.overlay.show{opacity:1 !important; pointer-events:auto !important}
 
 /* ============================================================
    アクセシビリティ

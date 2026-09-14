@@ -37,10 +37,10 @@ window.addEventListener("load", function(){
         height: bookSize.h,
         size: "fixed",
         showCover: true,
-        maxShadowOpacity: .4,
         mobileScrollSupport: false,
         showPageCorners: false,     /* ホバーでの角めくり・影を無効化 */
-        flippingTime: 800
+        maxShadowOpacity: .3,       /* 影を薄くして描画負荷を下げる */
+        flippingTime: 600           /* 短めにして引っかかりを減らす */
       });
       pageFlip.loadFromHTML(document.querySelectorAll(".page"));
       document.getElementById("total").textContent = pageFlip.getPageCount();
@@ -56,11 +56,14 @@ window.addEventListener("load", function(){
         if (flipLock) return false;
         flipLock = true;
         clearTimeout(lockTimer);
-        lockTimer = setTimeout(() => { flipLock = false; }, 1000); // 保険の自動解除
+        lockTimer = setTimeout(() => { flipLock = false; }, 800);  // 保険の自動解除
         return true;
       }
       pageFlip.on("changeState", (e) => {
-        if (e.data === "read"){            // アニメ完了＝待機状態に戻ったら解除
+        const flipping = (e.data !== "read");
+        /* めくり中は重い背景描画を止める（02-book.css の .is-flipping） */
+        if (bookWrap) bookWrap.classList.toggle("is-flipping", flipping);
+        if (!flipping){                    // アニメ完了＝待機状態に戻ったら解除
           flipLock = false;
           clearTimeout(lockTimer);
         }
@@ -145,10 +148,20 @@ window.addEventListener("load", function(){
     }
   }
 
-  /* ── サイドメニュー開閉 ── */
+  initSideMenu();
+});
+
+/* ── サイドメニュー開閉 ──
+   本の初期化とは切り離して定義する。
+   （同じ処理の中に置くと、本側でエラーが起きたときにメニューまで動かなくなるため） */
+function initSideMenu(){
   const toggle  = document.getElementById("menuToggle");
   const menu    = document.getElementById("sideMenu");
   const overlay = document.getElementById("overlay");
+  if (!toggle || !menu || !overlay) return;      // 要素が無い環境では何もしない
+  if (toggle.dataset.ecbBound === "1") return;   // 二重登録の防止
+  toggle.dataset.ecbBound = "1";
+
   const mtLabel = toggle.querySelector(".mt-label");
   function setMenu(open){
     menu.classList.toggle("open", open);
@@ -156,10 +169,18 @@ window.addEventListener("load", function(){
     toggle.classList.toggle("open", open);
     toggle.setAttribute("aria-expanded", open);
     toggle.setAttribute("aria-label", open ? "メニューを閉じる" : "メニューを開く");
-    mtLabel.textContent = open ? "CLOSE" : "MENU";
+    if (mtLabel) mtLabel.textContent = open ? "CLOSE" : "MENU";
   }
   toggle.addEventListener("click", () => setMenu(!menu.classList.contains("open")));
   overlay.addEventListener("click", () => setMenu(false));
   menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
   document.addEventListener("keydown", e => { if (e.key === "Escape") setMenu(false); });
-});
+}
+
+/* load を待たずに、DOMが使える時点でもメニューだけ先に有効化する
+   （BASEのテーマによっては load イベントが遅れる・発火済みのことがあるため） */
+if (document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", initSideMenu);
+} else {
+  initSideMenu();
+}
