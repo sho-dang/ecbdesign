@@ -1,0 +1,75 @@
+/* Encounter Coffee Beans — 商品一覧の見出し・商品詳細ページの追加スタイル
+
+   商品一覧と商品詳細の中身は BASE デフォルトテーマのコードをそのまま使っています。
+   このファイルは「追加した部品」と「サイトの色に合わせる最小限の上書き」だけです。
+   配色：紙 #eadfc8 ／ 墨 #1a1a1a ／ 臙脂 #8b3a2f ／ 表紙 #71422F */
+
+
+/* ===== 商品一覧の見出し（本の商品名からのスクロール先） ===== */
+#item-list{ scroll-margin-top:24px }   /* スクロールしたとき見出しが画面端に張り付かないよう余白 */
+
+.ecb-items-head{
+  text-align:center;
+  padding:70px 16px 30px;
+  color:#1a1a1a;
+}
+.ecb-items-title{
+  font-family:'Shippori Mincho',serif;
+  font-size:15px; font-weight:500; letter-spacing:.4em;
+  margin:0 0 6px;
+}
+.ecb-items-sub{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:10px; letter-spacing:.2em; opacity:.55;
+  margin:0;
+}
+
+
+/* ===== デフォルトの商品一覧をサイトの色に合わせる（最小限） =====
+   デフォルトのクラス名（.item / .itemTitle / .soldout_cover など）はそのまま。
+   色と書体だけを上書きしています。不要ならこのブロックごと消せば元の見た目に戻ります。 */
+body#shopTopPage .item .itemTitle h2{
+  font-family:'Shippori Mincho',serif;
+  font-weight:500;
+  letter-spacing:.06em;
+  color:#1a1a1a;
+}
+body#shopTopPage .item:hover .itemImg{
+  border-color:#71422F;            /* デフォルトは赤い点線 */
+}
+body#shopTopPage .item .itemImg a .soldout_cover p{
+  color:#71422F;                   /* デフォルトは赤 */
+  font-family:'Shippori Mincho',serif;
+  letter-spacing:.2em;
+}
+
+
+/* ===== 商品詳細ページ：カートボタンをサイトの色に（最小限） =====
+   デフォルトは黒。不要ならこのブロックごと消せば元に戻ります。 */
+body#shopDetailPage #purchase_form .purchaseButton .purchaseButton__btn{
+  background:#71422F;
+  font-family:'Shippori Mincho',serif;
+  letter-spacing:.2em;
+}
+
+
+/* ===== 商品詳細ページ：追加した「商品一覧へ戻る」リンク ===== */
+.ecb-detail__back{
+  max-width:960px;
+  margin:10px auto 40px;
+  padding:18px 16px 0;
+  border-top:1px solid rgba(26,26,26,.25);
+  font-family:'Shippori Mincho',serif;
+  font-size:13px; letter-spacing:.14em;
+}
+.ecb-detail__back a{ color:#1a1a1a; text-decoration:none }
+@media (hover:hover){
+  .ecb-detail__back a:hover{ opacity:.55 }
+}
+
+
+/* ===== （任意）テーマ標準のナビゲーションを隠す =====
+   左のサイドメニューだけにしたい場合は、次の行の先頭と末尾の
+   コメント記号（スラッシュとアスタリスク）を外してください。
+   ロゴとカートアイコンは残ります。 */
+/* body.shop #shopHeader nav{ display:none } */
