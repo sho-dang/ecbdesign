@@ -21,9 +21,13 @@
 #book{width:var(--book-w) !important; height:var(--book-h) !important}
 #book .stf__parent{width:var(--book-w) !important; height:var(--book-h) !important}
 
-/* ===== PC：本を開いた見開き表現 =====
+/* ===== PC：本を開いた見開き表現と、本の移動アニメーション =====
    実ページの隣に、色味だけ揃えた空白ページを並べます。
-   通常は「空白（左）＋ 実ページ（右）」、最終ページでは実ページのみ左に寄せます。 */
+   本の位置は .book-wrap の data-pos で切り替え、left の変化をアニメーションさせます。
+     center … 表紙・裏表紙を1枚だけ中央に置く
+     right  … 見開きの右ページの位置（左に空白ページ）
+     left   … 見開きの左ページの位置（裏表紙が閉じた直後）
+   移動の順番は 02-book.js が制御します。 */
 .spread-blank{display:none}
 
 @media (min-width:900px){
@@ -33,8 +37,15 @@
     contain:none;
   }
   #book{
-    position:absolute; top:0; right:0;    /* 通常は右ページ側に配置 */
+    position:absolute; top:0;
+    left:var(--book-w);                   /* 既定は右ページの位置 */
+    transition:left var(--slide-dur, .5s) cubic-bezier(.45,.05,.25,1);
   }
+  .book-wrap[data-pos="center"] #book{ left:calc(var(--book-w) / 2) }
+  .book-wrap[data-pos="right"]  #book{ left:var(--book-w) }
+  .book-wrap[data-pos="left"]   #book{ left:0 }
+  .book-wrap.no-anim #book,
+  .book-wrap.no-anim .spread-blank{ transition:none !important }
   .spread-blank{
     display:block;
     position:absolute; top:0; left:0;
@@ -44,16 +55,19 @@
       repeating-linear-gradient(0deg, rgba(120,90,40,.03) 0 1px, transparent 1px 4px),
       radial-gradient(ellipse at center, transparent 55%, rgba(120,90,40,.18) 100%);
     box-shadow:inset -14px 0 22px -14px rgba(26,26,26,.45);  /* 綴じ側の陰 */
+    opacity:0;                            /* 空白ページは見開きのときだけ出す */
+    transition:opacity var(--slide-dur, .5s) ease;
   }
-  /* 最終ページ：実ページを左に置き、右の空白は出さない */
-  .book-wrap.at-end #book{right:auto; left:0}
-  .book-wrap.at-end .spread-blank{display:none}
-  /* 左右のタップ領域は見開き全体ではなく実ページ側に合わせる */
+  .book-wrap.show-blank .spread-blank{ opacity:1 }
+
+  /* 左右のタップ領域は、本が今いる位置に合わせる */
   .book-wrap .tap-zone{width:26px}
-  .book-wrap .tap-next{right:0}
   .book-wrap .tap-prev{left:var(--book-w)}
-  .book-wrap.at-end .tap-prev{left:0}
-  .book-wrap.at-end .tap-next{right:var(--book-w)}
+  .book-wrap .tap-next{right:0}
+  .book-wrap[data-pos="center"] .tap-prev{ left:calc(var(--book-w) / 2) }
+  .book-wrap[data-pos="center"] .tap-next{ right:calc(var(--book-w) / 2) }
+  .book-wrap[data-pos="left"]   .tap-prev{ left:0 }
+  .book-wrap[data-pos="left"]   .tap-next{ right:var(--book-w) }
 }
 #book{
   pointer-events:none;              /* ドラッグ・スワイプでのめくりを遮断 */
@@ -81,6 +95,7 @@
 }
 .page-inner{
   width:100%; height:100%;
+  box-sizing:border-box;               /* 余白込みで幅100%（無いと右にずれて中央にならない） */
   padding:32px 28px 40px;
   display:flex; flex-direction:column;
   background-image:
@@ -121,17 +136,29 @@
     radial-gradient(ellipse 60% 45% at 50% 0%, rgba(25,10,5,.16), transparent 75%),
     radial-gradient(ellipse 55% 40% at 50% 100%, rgba(25,10,5,.18), transparent 75%);
 }
+.cover .page-inner{ padding:32px 20px }   /* 上下左右を対称にして中央を正確に */
 .cover .frame{
   position:relative; z-index:1;
-  border:none; padding:34px 26px;      /* 枠・二重額縁は廃止 */
+  width:100%;
+  border:none; padding:0;              /* 枠・二重額縁は廃止 */
+  text-align:center;
 }
+/* 文字の大きさを本の幅に比例させる（スマホで改行して崩れるのを防ぐ）
+   340px の本で従来と同じ 21px／9px になる比率です */
 .cover h2{
-  font-size:21px; letter-spacing:.22em; line-height:1.6;
+  font-size:max(15px, calc(var(--book-w) * .062));
+  letter-spacing:.22em; line-height:1.6;
+  white-space:nowrap;
+  padding-left:.22em;                  /* 文字間隔は最後の文字の後ろにも付くため、その分を左に足して中央をそろえる */
+  margin:0;
   color:#EFDFCE;
 }
 .cover small{
   display:block; font-family:'Zen Kaku Gothic New',sans-serif;
-  font-size:9px; letter-spacing:.3em; margin-top:18px; color:#C6A288;
+  font-size:max(8px, calc(var(--book-w) * .0265));
+  letter-spacing:.3em; margin-top:18px; color:#C6A288;
+  white-space:nowrap;
+  padding-left:.3em;                   /* 同上 */
 }
 .eyebrow{
   font-family:'Zen Kaku Gothic New',sans-serif;
