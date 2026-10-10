@@ -1,63 +1,182 @@
-/* Encounter Coffee Beans — 商品一覧の見出し・商品詳細ページの追加スタイル
+/* Encounter Coffee Beans — 商品一覧・商品詳細ページ・About ページ（Ver8）
+   base-paste.html の「③ 商品一覧」「商品詳細ページ」「About ページ」のスタイルです。
+   配色は他のファイルと共通（紙 #eadfc8 ／ 墨 #1a1a1a ／ 臙脂 #8b3a2f ／ 表紙 #71422F）。 */
 
-   商品一覧と商品詳細の中身は BASE デフォルトテーマのコードをそのまま使っています。
-   このファイルは「追加した部品」と「サイトの色に合わせる最小限の上書き」だけです。
-   配色：紙 #eadfc8 ／ 墨 #1a1a1a ／ 臙脂 #8b3a2f ／ 表紙 #71422F */
-
-
-/* ===== 商品一覧の見出し（本の商品名からのスクロール先） ===== */
-#item-list{ scroll-margin-top:24px }   /* スクロールしたとき見出しが画面端に張り付かないよう余白 */
-
-.ecb-items-head{
-  text-align:center;
-  padding:70px 16px 30px;
-  color:#1a1a1a;
-}
-.ecb-items-title{
-  font-family:'Shippori Mincho',serif;
-  font-size:15px; font-weight:500; letter-spacing:.4em;
-  margin:0 0 6px;
-}
-.ecb-items-sub{
+/* ===== セクション見出しの補助 ===== */
+.section-sub{
   font-family:'Zen Kaku Gothic New',sans-serif;
   font-size:10px; letter-spacing:.2em; opacity:.55;
-  margin:0;
+  margin:-2px 0 34px;
 }
 
+/* ===== 商品一覧 ===== */
+#item-list{ scroll-margin-top:24px }   /* 本の商品名から飛んだときの余白 */
 
-/* ===== デフォルトの商品一覧をサイトの色に合わせる（最小限） =====
-   デフォルトのクラス名（.item / .itemTitle / .soldout_cover など）はそのまま。
-   色と書体だけを上書きしています。不要ならこのブロックごと消せば元の見た目に戻ります。 */
-body#shopTopPage .item .itemTitle h2{
+.ecb-items{
+  list-style:none; margin:0; padding:0;
+  width:min(1000px, 92%);
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:26px 18px;
+}
+@media (min-width:700px){
+  .ecb-items{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:34px 24px }
+}
+@media (min-width:1200px){
+  .ecb-items{ grid-template-columns:repeat(4, minmax(0,1fr)) }
+}
+
+.ecb-item{ margin:0 }
+
+.ecb-item__link{
+  display:flex; flex-direction:column;
+  text-decoration:none; color:#1a1a1a;
+}
+
+/* --- 画像 --- */
+.ecb-item__thumb{
+  position:relative;
+  display:block;
+  aspect-ratio:1 / 1;
+  overflow:hidden;
+  background:#eadfc8;
+  border:1px solid rgba(26,26,26,.35);
+}
+.ecb-item__thumb img{
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+  transition:transform .5s ease;
+}
+@media (hover:hover){
+  .ecb-item__link:hover .ecb-item__thumb img{ transform:scale(1.04) }
+}
+
+/* 売り切れ表示 */
+.ecb-item__sold{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(26,26,26,.55);
+  color:#eadfc8;
   font-family:'Shippori Mincho',serif;
-  font-weight:500;
-  letter-spacing:.06em;
+  font-size:13px; letter-spacing:.24em;
+}
+
+/* --- 文字 --- */
+.ecb-item__body{
+  display:flex; flex-direction:column; gap:4px;
+  padding:12px 2px 0;
+}
+.ecb-item__name{
+  font-family:'Shippori Mincho',serif;
+  font-size:13px; letter-spacing:.06em; line-height:1.5;
+}
+.ecb-item__price{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:11px; letter-spacing:.08em; opacity:.8;
+}
+
+/* 商品が無いとき */
+.ecb-empty{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:12px; letter-spacing:.1em; opacity:.6;
+  padding:40px 0;
+}
+
+/* ===== 商品詳細ページ ===== */
+.ecb-detail{
+  width:min(1000px, 92%);
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:34px;
+}
+@media (min-width:860px){
+  .ecb-detail{ grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:52px; align-items:start }
+}
+
+.ecb-detail__gallery{ display:flex; flex-direction:column; gap:14px }
+.ecb-detail__gallery img{
+  width:100%; height:auto; display:block;
+  border:1px solid rgba(26,26,26,.35);
+  background:#eadfc8;
+}
+
+.ecb-detail__info{ color:#1a1a1a }
+
+.ecb-detail__name{
+  font-family:'Shippori Mincho',serif;
+  font-size:21px; font-weight:700; letter-spacing:.08em; line-height:1.6;
+  margin:0 0 10px;
+}
+.ecb-detail__price{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:15px; letter-spacing:.08em;
+  margin:0 0 20px;
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(26,26,26,.35);
+}
+
+/* BASEが出力する注意文（販売期間・予約など） */
+.ecb-detail__info .attention,
+.ecb-detail__info .preOrder{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:11px; line-height:1.9; letter-spacing:.06em;
+  margin:0 0 16px;
+}
+
+/* --- カート --- */
+.ecb-detail__cart{ margin:0 0 26px }
+.ecb-detail__cart select{
+  width:100%;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:13px;
+  padding:11px 12px;
+  margin-bottom:12px;
   color:#1a1a1a;
+  background:#fff;
+  border:1px solid #1a1a1a;
+  border-radius:0;
 }
-body#shopTopPage .item:hover .itemImg{
-  border-color:#71422F;            /* デフォルトは赤い点線 */
-}
-body#shopTopPage .item .itemImg a .soldout_cover p{
-  color:#71422F;                   /* デフォルトは赤 */
+/* BASEのカートボタン（.purchaseButton__btn はBASEが付けるクラス） */
+.ecb-detail__cart .purchaseButton__btn{
+  width:100%;
   font-family:'Shippori Mincho',serif;
-  letter-spacing:.2em;
-}
-
-
-/* ===== 商品詳細ページ：カートボタンをサイトの色に（最小限） =====
-   デフォルトは黒。不要ならこのブロックごと消せば元に戻ります。 */
-body#shopDetailPage #purchase_form .purchaseButton .purchaseButton__btn{
+  font-size:14px; letter-spacing:.2em;
+  padding:15px 20px;
+  color:#eadfc8;
   background:#71422F;
-  font-family:'Shippori Mincho',serif;
-  letter-spacing:.2em;
+  border:1px solid #71422F;
+  border-radius:0;
+  cursor:pointer;
+  transition:background .25s, color .25s;
+}
+@media (hover:hover){
+  .ecb-detail__cart .purchaseButton__btn:hover{ background:#8b3a2f; border-color:#8b3a2f }
+}
+.ecb-detail__cart .purchaseButton__btn--soldOut,
+.ecb-detail__cart .purchaseButton__btn--endOfSale,
+.ecb-detail__cart .purchaseButton__btn--comingSoonStay,
+.ecb-detail__cart .purchaseButton__btn--notApplying{
+  background:transparent; color:#1a1a1a; border-color:rgba(26,26,26,.45);
+  cursor:default;
 }
 
+/* --- 説明文 --- */
+.ecb-detail__text{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:13px; line-height:2.1; letter-spacing:.04em;
+}
+.ecb-detail__text a{ color:#8b3a2f }
 
-/* ===== 商品詳細ページ：追加した「商品一覧へ戻る」リンク ===== */
+.ecb-detail__report{
+  margin-top:26px;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:10px; opacity:.7;
+}
+.ecb-detail__report a{ color:#1a1a1a }
+
 .ecb-detail__back{
-  max-width:960px;
-  margin:10px auto 40px;
-  padding:18px 16px 0;
+  margin-top:30px;
+  padding-top:18px;
   border-top:1px solid rgba(26,26,26,.25);
   font-family:'Shippori Mincho',serif;
   font-size:13px; letter-spacing:.14em;
@@ -67,9 +186,31 @@ body#shopDetailPage #purchase_form .purchaseButton .purchaseButton__btn{
   .ecb-detail__back a:hover{ opacity:.55 }
 }
 
+/* ===== 各ページ本文（お問い合わせ・特商法など） =====
+   base-paste.html 側でタグの前後に空白を入れていないので、
+   該当ページ以外では中身が空になり、このセクションごと隠れます。 */
+.base-page-contents:empty{ display:none }
 
-/* ===== （任意）テーマ標準のナビゲーションを隠す =====
-   左のサイドメニューだけにしたい場合は、次の行の先頭と末尾の
-   コメント記号（スラッシュとアスタリスク）を外してください。
-   ロゴとカートアイコンは残ります。 */
-/* body.shop #shopHeader nav{ display:none } */
+/* ===== About ページ（Ver8 追加） ===== */
+.ecb-about__body{
+  width:min(680px, 92%);
+  margin-top:26px;
+  color:#1a1a1a;
+}
+.ecb-about__text{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:13px; line-height:2.2; letter-spacing:.05em;
+  margin:0;
+  word-break:break-word;
+}
+.ecb-about__text a{ color:#8b3a2f }
+.ecb-about__sns{
+  list-style:none; margin:30px 0 0; padding:0;
+  display:flex; flex-wrap:wrap; gap:16px;
+}
+.ecb-about__sns a{ display:block; transition:opacity .25s }
+.ecb-about__sns img{ display:block; width:28px; height:28px; object-fit:contain }
+@media (hover:hover){
+  .ecb-about__sns a:hover{ opacity:.55 }
+}
+.ecb-about .ecb-detail__back{ width:min(680px, 92%) }
