@@ -20,6 +20,16 @@
 .base-menu{display:flex; align-items:center; gap:12px}
 .base-menu img{max-height:26px; width:auto}
 
+/* BASEメニュー（BASEMenuTag が出力するリスト）を横並び・中央そろえにする（Ver9 追加）
+   クラス名 clearfix / cart は BASE 側が付けるもの。
+   他の場所の clearfix に影響しないよう、.base-menu の中だけに限定しています。 */
+.base-menu ul.clearfix{
+  display:flex;
+  justify-content:center;
+  list-style-type:none;
+}
+.base-menu li.cart{ margin-right:20px; margin-left:20px; }
+
 /* PCではサイドバーが左にあるので、アイコン分の余白は不要 */
 @media (min-width:900px){
   .base-header{padding-left:24px}

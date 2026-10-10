@@ -222,6 +222,10 @@
   padding:70px 32px;
   text-align:center;
 }
+/* PCではトップページの中身を最大600pxにそろえる（Ver9） */
+@media (min-width:900px){
+  .spare{ width:min(600px, 100%) }
+}
 .spare h3{font-size:17px; letter-spacing:.3em; margin-bottom:16px}
 .spare p{
   font-family:'Zen Kaku Gothic New',sans-serif;
