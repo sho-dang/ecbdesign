@@ -3,11 +3,11 @@ window.addEventListener("load", function(){
   fitStage();
 
   /* ── 本のサイズを画面に合わせて決める ──
-     PC：見開き（2ページ分）の幅を「サイドメニューを除いた幅 − 左右余白」と 600px の小さい方に収める。
+     PC：見開き（2ページ分）の幅を「サイドメニューを除いた幅 − 左右余白」と 800px の小さい方に収める。
          縦も画面内に収まるように縮める。
      スマホ：基本 340×460。画面幅が狭い端末（幅 372px 未満）では左右16pxの余白を残して縮める。 */
   const BOOK_BASE_W = 340, BOOK_BASE_H = 460;
-  const PC_MIN = 900, SIDEBAR = 240, PC_SIDE_MARGIN = 40, PC_MAX_SPREAD = 600;
+  const PC_MIN = 900, SIDEBAR = 240, PC_SIDE_MARGIN = 40, PC_MAX_SPREAD = 800;
   function isPC(){ return document.documentElement.clientWidth >= PC_MIN; }
   function calcBookSize(){
     const vw = document.documentElement.clientWidth;

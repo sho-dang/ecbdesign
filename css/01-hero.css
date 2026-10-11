@@ -44,13 +44,14 @@ body{
 /* ステージ：固定900x520。JSで画面幅に合わせて縮小 */
 .stage-wrap{
   position:relative; width:100%;
-  padding-left:max(16px, 4vw);
+  display:flex; justify-content:center;    /* スマホでも中央に置く（Ver10：左寄せの修正） */
   overflow:hidden;
 }
 .stage{
   position:relative;
+  flex:0 0 auto;
   width:530px; height:480px;
-  transform-origin:top left;
+  transform-origin:top center;             /* 中央を基準に縮小する */
 }
 /* JSが無効でも大きくはみ出さないための保険 */
 @media (max-width:590px){ .stage{transform:scale(.6)} .stage-wrap{height:288px} }

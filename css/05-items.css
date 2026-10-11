@@ -1,4 +1,4 @@
-/* Encounter Coffee Beans — 商品一覧・商品詳細ページ・About ページ（Ver9）
+/* Encounter Coffee Beans — 商品一覧・商品詳細ページ・About ページ（Ver10）
    base-paste.html の「③ 商品一覧」「商品詳細ページ」「About ページ」のスタイルです。
    配色は他のファイルと共通（紙 #eadfc8 ／ 墨 #1a1a1a ／ 臙脂 #8b3a2f ／ 表紙 #71422F）。 */
 
@@ -16,12 +16,12 @@
 
 .ecb-items{
   list-style:none; margin:0; padding:0;
-  width:min(600px, 92%);                /* PC・スマホとも最大600px */
+  width:min(800px, 92%);                /* PC・スマホとも最大800px */
   display:flex; flex-direction:column;
   border-top:1px solid rgba(26,26,26,.35);
 }
 @media (min-width:900px){
-  .ecb-items{ width:min(600px, 100%) }
+  .ecb-items{ width:min(800px, 100%) }
 }
 
 .ecb-item{
